@@ -76,7 +76,7 @@ class DashboardView {
           </div>
         </div>
 
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <div class="xp-buttons-group">
           <button class="btn btn-sm btn-primary" onclick="window.focusRoom.openFocusRoom()" title="Launch Pomodoro Focus Mode with Ambient Soundscapes">
             🎧 Cozy Focus Room
           </button>

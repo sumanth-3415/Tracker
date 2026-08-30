@@ -82,13 +82,31 @@ class TrackMateApp {
     }
   }
 
-  // Toggle Desktop Sidebar Collapse
+  // Toggle Desktop Sidebar Collapse or Mobile Drawer
   toggleSidebar() {
     const sidebar = document.getElementById('app-sidebar');
-    if (sidebar) {
-      sidebar.classList.toggle('collapsed');
-      sidebar.classList.toggle('open');
+    let backdrop = document.getElementById('sidebar-backdrop');
+    if (!backdrop) {
+      backdrop = document.createElement('div');
+      backdrop.id = 'sidebar-backdrop';
+      backdrop.className = 'sidebar-backdrop';
+      backdrop.onclick = () => this.closeSidebar();
+      document.body.appendChild(backdrop);
     }
+
+    if (window.innerWidth <= 1024) {
+      const isOpen = sidebar.classList.toggle('open');
+      backdrop.classList.toggle('active', isOpen);
+    } else {
+      sidebar.classList.toggle('collapsed');
+    }
+  }
+
+  closeSidebar() {
+    const sidebar = document.getElementById('app-sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    if (sidebar) sidebar.classList.remove('open');
+    if (backdrop) backdrop.classList.remove('active');
   }
 
   // Toggle Floating Action Button Menu

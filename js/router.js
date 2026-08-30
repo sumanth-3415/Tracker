@@ -44,6 +44,11 @@ class TrackMateRouter {
     // Render View
     await ViewClass.render(container);
 
+    // Close mobile sidebar if open
+    if (window.app && window.app.closeSidebar) {
+      window.app.closeSidebar();
+    }
+
     // Update active nav indicators in sidebar and mobile bottom nav
     this.updateActiveNavLinks(path);
   }
