@@ -73,16 +73,27 @@ class TrackMateState {
     }
     this.userProfile = profile;
 
-    // Load all entities from IndexedDB
-    await this.refreshAllData();
-
-    // If first launch ever (and not previously seeded/cleared), seed demo data once
-    const hasSeeded = localStorage.getItem('tm_demo_seeded');
-    if (!hasSeeded && this.trackers.length === 0) {
+    // Clean slate initialization: Clear old demo data once for a fresh start
+    if (localStorage.getItem('tm_clean_slate_fresh') !== 'true') {
+      localStorage.setItem('tm_clean_slate_fresh', 'true');
       localStorage.setItem('tm_demo_seeded', 'true');
-      await this.seedDemoData();
+      await this.clearAllDataAndStartFresh();
+    } else {
       await this.refreshAllData();
     }
+  }
+
+  async clearAllDataAndStartFresh() {
+    await window.db.clear('trackers');
+    await window.db.clear('tasks');
+    await window.db.clear('habits');
+    await window.db.clear('habit_logs');
+    await window.db.clear('goals');
+    await window.db.clear('projects');
+    await window.db.clear('notes');
+    await window.db.clear('activity_logs');
+    localStorage.removeItem('tm_avatar_stats');
+    await this.refreshAllData();
   }
 
   async refreshAllData() {
@@ -98,121 +109,7 @@ class TrackMateState {
   }
 
   async seedDemoData() {
-    console.log('[TrackMateState] Seeding rich demo trackers & tasks...');
-    const guestId = this.userProfile.id;
-    const now = new Date();
-    const todayStr = now.toISOString().split('T')[0];
-
-    // Seed Trackers
-    for (const tracker of CONFIG.DEMO_TRACKERS) {
-      const trackerObj = {
-        ...tracker,
-        user_id: guestId,
-        created_at: now.toISOString(),
-        updated_at: now.toISOString()
-      };
-      await window.db.put('trackers', trackerObj);
-      await window.syncEngine.queueMutation('trackers', 'upsert', trackerObj);
-    }
-
-    // Seed Habits
-    for (const habit of CONFIG.DEMO_HABITS) {
-      const habitObj = {
-        ...habit,
-        user_id: guestId,
-        created_at: now.toISOString(),
-        updated_at: now.toISOString()
-      };
-      await window.db.put('habits', habitObj);
-      await window.syncEngine.queueMutation('habits', 'upsert', habitObj);
-
-      // Seed past week logs for streak
-      for (let i = 0; i < 7; i++) {
-        const pastDate = new Date();
-        pastDate.setDate(now.getDate() - i);
-        const dateStr = pastDate.toISOString().split('T')[0];
-        const logObj = {
-          id: `${habit.id}_${dateStr}`,
-          habit_id: habit.id,
-          date: dateStr,
-          completed: i !== 3, // Simulate one missed day with grace
-          timestamp: pastDate.toISOString()
-        };
-        await window.db.put('habit_logs', logObj);
-      }
-    }
-
-    // Seed Demo Tasks
-    const demoTasks = [
-      {
-        id: 'task-java-study',
-        user_id: guestId,
-        tracker_id: 'tracker-study-demo',
-        title: 'Study Java Collections & Generics',
-        description: 'Complete practice questions on ArrayList and HashMap implementations',
-        priority: 'high',
-        status: 'in_progress',
-        due_date: todayStr,
-        due_time: '18:00',
-        category: 'Study',
-        tags: ['java', 'dsa', 'backend'],
-        estimated_minutes: 90,
-        actual_minutes: 45,
-        subtasks: [
-          { id: 'st-1', title: 'Review ArrayList vs LinkedList', completed: true },
-          { id: 'st-2', title: 'Solve 3 LeetCode Map problems', completed: false },
-          { id: 'st-3', title: 'Write custom comparator example', completed: false }
-        ],
-        recurring_pattern: 'custom_days',
-        recurring_days: [1, 3, 5],
-        created_at: now.toISOString(),
-        updated_at: now.toISOString()
-      },
-      {
-        id: 'task-project-tracker',
-        user_id: guestId,
-        tracker_id: 'tracker-coding-demo',
-        title: 'Build TrackMate Responsive Layout',
-        description: 'Implement desktop sidebar and mobile bottom navigation',
-        priority: 'urgent',
-        status: 'completed',
-        due_date: todayStr,
-        due_time: '15:00',
-        category: 'Development',
-        tags: ['frontend', 'pwa', 'responsive'],
-        estimated_minutes: 120,
-        actual_minutes: 110,
-        subtasks: [
-          { id: 'st-4', title: 'Create CSS variables & theme tokens', completed: true },
-          { id: 'st-5', title: 'Add mobile bottom nav bar', completed: true }
-        ],
-        created_at: now.toISOString(),
-        updated_at: now.toISOString()
-      },
-      {
-        id: 'task-workout-session',
-        user_id: guestId,
-        tracker_id: 'tracker-fitness-demo',
-        title: 'Full Body Gym Workout',
-        description: 'Bench press, pull-ups, squats, and core intervals',
-        priority: 'medium',
-        status: 'completed',
-        due_date: todayStr,
-        due_time: '07:30',
-        category: 'Health',
-        tags: ['fitness', 'workout'],
-        estimated_minutes: 60,
-        actual_minutes: 60,
-        subtasks: [],
-        created_at: now.toISOString(),
-        updated_at: now.toISOString()
-      }
-    ];
-
-    for (const task of demoTasks) {
-      await window.db.put('tasks', task);
-      await window.syncEngine.queueMutation('tasks', 'upsert', task);
-    }
+    // Zero hardcoded demo items - completely fresh start!
   }
 
   // --- CRUD Actions ---

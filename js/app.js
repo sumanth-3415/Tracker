@@ -28,11 +28,9 @@ class TrackMateApp {
     // 7. Initial Route
     await window.router.handleRoute();
 
-    // Re-render view whenever state is updated
-    window.state.on('state:updated', () => {
-      window.router.handleRoute();
+    // Re-render view whenever state is updated without jumping scroll
+      window.router.handleRoute(false);
     });
-
     console.log('[TrackMate] Ready and operational 🚀');
   }
 

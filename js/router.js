@@ -1,9 +1,10 @@
 /**
- * TrackMate - SPA Hash Router & Navigation State
+ * TrackMate - SPA Hash Router & Navigation State (With Scroll Preservation)
  */
 
 class TrackMateRouter {
   constructor() {
+    this.currentPath = null;
     this.routes = {
       '': DashboardView,
       '#dashboard': DashboardView,
@@ -17,14 +18,20 @@ class TrackMateRouter {
       '#settings': SettingsView
     };
 
-    window.addEventListener('hashchange', () => this.handleRoute());
+    window.addEventListener('hashchange', () => this.handleRoute(true));
   }
 
-  async handleRoute() {
+  async handleRoute(isExplicitNavigation = false) {
     const rawHash = window.location.hash || '#dashboard';
     const [path, queryString] = rawHash.split('?');
     const container = document.getElementById('view-content');
     if (!container) return;
+
+    const isNewPage = this.currentPath !== path;
+    this.currentPath = path;
+
+    // Preserve scroll position on in-page state updates
+    const savedScrollY = window.scrollY;
 
     // Check for shared tracker route `#shared/:id`
     if (path.startsWith('#shared/')) {
@@ -38,11 +45,16 @@ class TrackMateRouter {
 
     const ViewClass = this.routes[path] || DashboardView;
 
-    // Scroll to top
-    window.scrollTo({ top: 0, behavior: 'instant' });
-
     // Render View
     await ViewClass.render(container);
+
+    // Scroll handling: Only jump to top on actual navigation to a different tab/page!
+    if (isNewPage && isExplicitNavigation) {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    } else {
+      // Stay at current scroll position on in-page updates/deletions
+      window.scrollTo({ top: savedScrollY, behavior: 'instant' });
+    }
 
     // Close mobile sidebar if open
     if (window.app && window.app.closeSidebar) {
@@ -79,4 +91,3 @@ class TrackMateRouter {
 }
 
 window.router = new TrackMateRouter();
-
