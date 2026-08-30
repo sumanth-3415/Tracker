@@ -248,8 +248,7 @@ class HabitsView {
     const id = document.getElementById('habit-modal-id').value;
     const title = document.getElementById('habit-input-title').value;
     const emoji = document.getElementById('habit-input-emoji').value;
-    const tracker_id = document.getElementById('habit-input-tracker').value;
-    const target_frequency = document.getElementById('habit-input-frequency').value;
+    const tracker_id = document.getElementById('habit-input-tracker')?.value || 'general';
     const reminder_time = document.getElementById('habit-input-reminder').value;
     const grace_days_per_week = parseInt(document.getElementById('habit-input-grace').value, 10) || 1;
     const description = document.getElementById('habit-input-desc').value;

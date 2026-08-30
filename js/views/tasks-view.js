@@ -144,6 +144,7 @@ class TasksView {
                 <div class="form-group">
                   <label class="form-label">Tracker</label>
                   <select id="task-input-tracker" class="form-select">
+                    <option value="general">✨ General Task</option>
                     ${trackers.map((t) => `<option value="${t.id}">${t.emoji} ${t.name}</option>`).join('')}
                   </select>
                 </div>
@@ -285,7 +286,7 @@ class TasksView {
     event.preventDefault();
     const id = document.getElementById('task-modal-id').value;
     const title = document.getElementById('task-input-title').value;
-    const tracker_id = document.getElementById('task-input-tracker').value;
+    const tracker_id = document.getElementById('task-input-tracker')?.value || 'general';
     const priority = document.getElementById('task-input-priority').value;
     const due_date = document.getElementById('task-input-date').value;
     const due_time = document.getElementById('task-input-time').value;

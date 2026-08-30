@@ -1,5 +1,5 @@
 // TrackMate Service Worker - Offline Cache & Background Support
-const CACHE_NAME = 'trackmate-v2.0.0';
+const CACHE_NAME = 'trackmate-v2.1.0';
   './',
   './index.html',
   './manifest.json',
