@@ -1,0 +1,198 @@
+/* ==========================================================================
+   TrackMate - Gamification, XP Levels, Trophies & Celebrations
+   ========================================================================== */
+
+/* Daily Motivational Quote Banner */
+.daily-quote-card {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(236, 72, 153, 0.08));
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: var(--space-4) var(--space-6);
+  margin-bottom: var(--space-5);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  position: relative;
+  overflow: hidden;
+}
+
+.daily-quote-card::before {
+  content: '“';
+  position: absolute;
+  top: -15px;
+  right: 15px;
+  font-size: 80px;
+  font-family: Georgia, serif;
+  color: rgba(255, 255, 255, 0.04);
+  pointer-events: none;
+}
+
+.quote-icon-box {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.quote-text {
+  font-size: var(--text-sm);
+  font-style: italic;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.quote-author {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-top: 2px;
+  font-style: normal;
+}
+
+/* Level & XP Progression Banner */
+.xp-level-container {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-xl);
+  padding: var(--space-4) var(--space-6);
+  margin-bottom: var(--space-6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.level-badge-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.level-shield {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);
+  font-weight: 800;
+}
+
+.level-shield-num {
+  font-size: var(--text-lg);
+  line-height: 1;
+}
+
+.level-shield-lbl {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.9;
+}
+
+.level-title-text {
+  font-size: var(--text-base);
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.level-rank-title {
+  font-size: var(--text-xs);
+  color: #f59e0b;
+  font-weight: 700;
+}
+
+.xp-bar-wrapper {
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.xp-bar-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.xp-bar-track {
+  width: 100%;
+  height: 10px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  position: relative;
+}
+
+.xp-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6366f1, #ec4899, #f59e0b);
+  border-radius: var(--radius-full);
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 12px rgba(236, 72, 153, 0.6);
+}
+
+/* Vitality & Energy Score Gauge */
+.vitality-card {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(6, 182, 212, 0.08));
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-6);
+}
+
+.vitality-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.vitality-icon {
+  font-size: 28px;
+}
+
+.vitality-val {
+  font-size: var(--text-xl);
+  font-weight: 800;
+  color: var(--accent-emerald);
+}
+
+.vitality-lbl {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+/* Confetti Canvas Overlay */
+#confetti-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 200;
+}
+
+/* Share Card Canvas Preview Modal */
+.share-card-preview-box {
+  background: linear-gradient(135deg, #1e1b4b, #0f172a);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+

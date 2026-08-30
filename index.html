@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#4f46e5">
+  <meta name="description" content="Customizable personal productivity, habit, task, and goal tracking application with interactive avatar simulation and gamified focus room.">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="TrackMate">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/svg+xml" href="./assets/icons/icon.svg">
+  <title>TrackMate - Personal Productivity & Tracker</title>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Core & Component Stylesheets -->
+  <link rel="stylesheet" href="./css/variables.css">
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/components.css">
+  <link rel="stylesheet" href="./css/dashboard.css">
+  <link rel="stylesheet" href="./css/avatar.css">
+  <link rel="stylesheet" href="./css/gamification.css">
+  <link rel="stylesheet" href="./css/focus-room.css">
+  <link rel="stylesheet" href="./css/trackers.css">
+  <link rel="stylesheet" href="./css/tasks.css">
+  <link rel="stylesheet" href="./css/habits.css">
+  <link rel="stylesheet" href="./css/calendar.css">
+  <link rel="stylesheet" href="./css/analytics.css">
+  <link rel="stylesheet" href="./css/reports.css">
+  <link rel="stylesheet" href="./css/settings.css">
+</head>
+<body>
+  <div id="app-container">
+    <!-- Desktop Sidebar -->
+    <aside id="app-sidebar" class="app-sidebar">
+      <div class="sidebar-header">
+        <a href="#dashboard" class="brand-logo">
+          <img src="./assets/icons/icon.svg" alt="TrackMate Logo" class="brand-icon">
+          <span>TrackMate</span>
+        </a>
+        <button class="sidebar-toggle-btn" onclick="window.app.toggleSidebar()" title="Toggle Sidebar">
+          ‹
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Productivity</div>
+        <a href="#dashboard" class="nav-link active">
+          <span class="nav-icon">📊</span>
+          <span>Dashboard</span>
+        </a>
+        <a href="#trackers" class="nav-link">
+          <span class="nav-icon">🎯</span>
+          <span>My Trackers</span>
+        </a>
+        <a href="#tasks" class="nav-link">
+          <span class="nav-icon">📝</span>
+          <span>Tasks</span>
+        </a>
+        <a href="#habits" class="nav-link">
+          <span class="nav-icon">🔥</span>
+          <span>Habits & Streaks</span>
+        </a>
+        <a href="#calendar" class="nav-link">
+          <span class="nav-icon">📅</span>
+          <span>Calendar</span>
+        </a>
+        <a href="#goals" class="nav-link">
+          <span class="nav-icon">🚀</span>
+          <span>Goals & Projects</span>
+        </a>
+
+        <div class="nav-section-title">Insights & Focus</div>
+        <a href="javascript:void(0)" onclick="window.focusRoom.openFocusRoom()" class="nav-link">
+          <span class="nav-icon">🎧</span>
+          <span>Focus Room</span>
+        </a>
+        <a href="#analytics" class="nav-link">
+          <span class="nav-icon">📈</span>
+          <span>Analytics</span>
+        </a>
+        <a href="#reports" class="nav-link">
+          <span class="nav-icon">📑</span>
+          <span>Reports & Messaging</span>
+        </a>
+
+        <div class="nav-section-title">System</div>
+        <a href="#settings" class="nav-link">
+          <span class="nav-icon">⚙️</span>
+          <span>Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sync-status-indicator" title="Local-first offline storage ready">
+          <div id="sync-status-dot" class="sync-dot"></div>
+          <span id="sync-status-text">Local Ready</span>
+        </div>
+        <button class="btn-icon" onclick="window.app.openQuickAddModal()" title="Quick Add (Q)">⚡</button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="app-main">
+      <!-- Sticky Top Header -->
+      <header class="app-header">
+        <div class="header-left">
+          <button class="mobile-menu-toggle btn-icon" onclick="window.app.toggleSidebar()">☰</button>
+          <div class="brand-logo" style="display: none;">
+            <img src="./assets/icons/icon.svg" alt="TrackMate" style="width: 28px; height: 28px;">
+          </div>
+        </div>
+
+        <div class="global-search-bar">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="global-search-input" class="search-input" placeholder="Search tasks, trackers...">
+          <span class="search-shortcut-badge">Ctrl K</span>
+        </div>
+
+        <div class="header-right">
+          <button class="btn btn-sm btn-outline" onclick="window.focusRoom.openFocusRoom()" title="Focus Pomodoro Room">
+            <span>🎧</span> Focus
+          </button>
+          <button class="btn btn-sm btn-primary" onclick="window.app.openQuickAddModal()" title="Quick Add">
+            <span>+</span> Quick Add
+          </button>
+          <button class="btn-icon" onclick="window.SettingsView.setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark')" title="Toggle Theme">
+            🌓
+          </button>
+        </div>
+      </header>
+
+      <!-- Dynamic View Container -->
+      <main id="view-content" class="view-container">
+        <!-- Rendered dynamically by SPA router -->
+      </main>
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <nav class="mobile-bottom-nav">
+    <a href="#dashboard" class="bottom-nav-item active">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+      </svg>
+      <span>Home</span>
+    </a>
+    <a href="#trackers" class="bottom-nav-item">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+      </svg>
+      <span>Trackers</span>
+    </a>
+    <a href="javascript:void(0)" onclick="window.focusRoom.openFocusRoom()" class="bottom-nav-item">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      <span>Focus</span>
+    </a>
+    <a href="#reports" class="bottom-nav-item">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+      </svg>
+      <span>Reports</span>
+    </a>
+    <a href="#settings" class="bottom-nav-item">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+      </svg>
+      <span>Settings</span>
+    </a>
+  </nav>
+
+  <!-- Floating Action Button (FAB) -->
+  <div id="fab-container" class="fab-container">
+    <button class="fab-main-btn" onclick="window.app.toggleFAB()" title="Quick Actions">+</button>
+    <div class="fab-options">
+      <button class="fab-item-btn" onclick="window.app.openQuickAddModal()">📝 Quick Add Task</button>
+      <button class="fab-item-btn" onclick="window.focusRoom.openFocusRoom()">🎧 Focus Room</button>
+      <button class="fab-item-btn" onclick="window.location.hash='#habits'; setTimeout(() => window.HabitsView.openHabitModal(), 100); window.app.toggleFAB();">🔥 New Habit</button>
+      <button class="fab-item-btn" onclick="window.location.hash='#trackers'; setTimeout(() => window.TrackersView.openCreateTrackerModal(), 100); window.app.toggleFAB();">🎯 New Tracker</button>
+      <button class="fab-item-btn" onclick="window.location.hash='#goals'; setTimeout(() => window.GoalsView.openGoalModal(), 100); window.app.toggleFAB();">🚀 New Goal</button>
+    </div>
+  </div>
+
+  <!-- Natural Language Quick Add Modal -->
+  <div id="quick-add-modal" class="modal-overlay">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2 class="modal-title">⚡ Smart Quick Add</h2>
+        <button class="btn-icon" onclick="window.app.closeQuickAddModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <form onsubmit="window.app.handleQuickAddSubmit(event)">
+          <div class="form-group">
+            <label class="form-label">Type naturally with dates, times, priorities & tags</label>
+            <input type="text" id="quick-add-input" class="form-control"
+                   placeholder="e.g. Study DBMS tomorrow 7 PM !urgent #study"
+                   oninput="window.app.updateQuickAddPreview(this.value)" autocomplete="off">
+          </div>
+
+          <div id="quick-add-preview" style="background: var(--bg-primary); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); margin-bottom: var(--space-4);">
+            <div style="font-size: 11px; color: var(--text-muted);">
+              💡 Try typing: <span style="color: var(--primary);">"Study DBMS tomorrow 7 PM !urgent #study"</span>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="window.app.closeQuickAddModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary">Add Task</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Application Scripts -->
+  <script src="./js/config.js"></script>
+  <script src="./js/db.js"></script>
+  <script src="./js/sync.js"></script>
+  <script src="./js/parser.js"></script>
+  <script src="./js/streak-engine.js"></script>
+  <script src="./js/recurring.js"></script>
+  <script src="./js/notifications.js"></script>
+  <script src="./js/charts.js"></script>
+  <script src="./js/reports-engine.js"></script>
+  <script src="./js/state.js"></script>
+  <script src="./js/avatar-simulator.js"></script>
+  <script src="./js/gamification.js"></script>
+  <script src="./js/focus-room.js"></script>
+
+  <!-- Views -->
+  <script src="./js/views/dashboard-view.js"></script>
+  <script src="./js/views/trackers-view.js"></script>
+  <script src="./js/views/tasks-view.js"></script>
+  <script src="./js/views/habits-view.js"></script>
+  <script src="./js/views/calendar-view.js"></script>
+  <script src="./js/views/goals-view.js"></script>
+  <script src="./js/views/analytics-view.js"></script>
+  <script src="./js/views/reports-view.js"></script>
+  <script src="./js/views/shared-view.js"></script>
+  <script src="./js/views/settings-view.js"></script>
+
+  <!-- Router & Bootstrap -->
+  <script src="./js/router.js"></script>
+  <script src="./js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+{
+  "name": "TrackMate - Productivity & Tracker",
+  "short_name": "TrackMate",
+  "description": "Customizable personal productivity, habit, task, and goal tracking app with offline sync and streak motivation.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0f172a",
+  "theme_color": "#4f46e5",
+  "categories": ["productivity", "utilities", "lifestyle"],
+  "icons": [
+    {
+      "src": "./assets/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Quick Add Task",
+      "url": "./index.html#quick-add",
+      "description": "Rapidly add a task or habit"
+    },
+    {
+      "name": "Today's Agenda",
+      "url": "./index.html#dashboard",
+      "description": "View today's tasks and streaks"
+    },
+    {
+      "name": "Calendar",
+      "url": "./index.html#calendar",
+      "description": "Open full calendar view"
+    }
+  ]
+}
+

@@ -1,0 +1,166 @@
+/* ==========================================================================
+   TrackMate - Habit Tracker & Streak Styles
+   ========================================================================== */
+
+.habits-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.habit-row-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.habit-main-col {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 200px;
+}
+
+.habit-emoji-box {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-lg);
+  background-color: var(--bg-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.habit-info-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.habit-name {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.habit-target-freq {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+/* Weekday Day Bubbles for Habit */
+.habit-days-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.habit-day-bubble {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.habit-day-name {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.habit-check-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--bg-primary);
+  border: 2px solid var(--border-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: transparent;
+  font-size: 14px;
+  font-weight: 800;
+  transition: all var(--transition-fast);
+}
+
+.habit-check-circle:hover {
+  border-color: var(--primary);
+  transform: scale(1.08);
+}
+
+.habit-check-circle.completed {
+  background: linear-gradient(135deg, var(--accent-emerald), #059669);
+  border-color: var(--accent-emerald);
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+}
+
+.habit-check-circle.today {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-light);
+}
+
+/* Habit Streak Badge */
+.habit-streak-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 140, 0, 0.1);
+  border: 1px solid rgba(255, 140, 0, 0.25);
+}
+
+.habit-streak-fire {
+  font-size: 20px;
+}
+
+.habit-streak-count {
+  font-size: var(--text-base);
+  font-weight: 800;
+  color: #ff8c00;
+}
+
+/* Habit Mini Heatmap Grid (GitHub style) */
+.heatmap-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  overflow-x: auto;
+  padding: var(--space-2) 0;
+}
+
+.heatmap-grid {
+  display: grid;
+  grid-template-rows: repeat(7, 12px);
+  grid-auto-flow: column;
+  grid-auto-columns: 12px;
+  gap: 3px;
+}
+
+.heatmap-cell {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  background-color: var(--bg-tertiary);
+  transition: transform var(--transition-fast);
+}
+
+.heatmap-cell:hover {
+  transform: scale(1.3);
+}
+
+.heatmap-cell.level-1 { background-color: rgba(16, 185, 129, 0.3); }
+.heatmap-cell.level-2 { background-color: rgba(16, 185, 129, 0.5); }
+.heatmap-cell.level-3 { background-color: rgba(16, 185, 129, 0.75); }
+.heatmap-cell.level-4 { background-color: #10b981; box-shadow: 0 0 4px #10b981; }
+

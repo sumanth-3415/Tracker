@@ -1,0 +1,10 @@
+# Logs & Temp
+*.log
+.system_generated/
+scratch/
+.gemini/
+
+# OS files
+Thumbs.db
+.DS_Store
+

@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "name": "trackmate",
+  "routes": [
+    {
+      "src": "/service-worker.js",
+      "headers": { "cache-control": "no-cache" },
+      "dest": "/service-worker.js"
+    },
+    {
+      "src": "/manifest.json",
+      "headers": { "cache-control": "public, max-age=3600" },
+      "dest": "/manifest.json"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ]
+}
+
