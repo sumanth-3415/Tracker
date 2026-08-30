@@ -1,5 +1,5 @@
 /**
- * TrackMate - Dashboard View Renderer (With Dynamic User Activity Driven Avatar)
+ * TrackMate - Dashboard View Renderer (With Dynamic Activities & Instant Delete Options)
  */
 
 class DashboardView {
@@ -204,9 +204,9 @@ class DashboardView {
 
                       return `
                         <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--bg-primary); border-radius: var(--radius-md); border: 1px solid var(--border-subtle); gap: 10px;">
-                          <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+                          <div style="display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1;">
                             <span style="font-size: 18px;">${act.emoji}</span>
-                            <div style="min-width: 0;">
+                            <div style="min-width: 0; flex: 1;">
                               <div style="font-size: 13px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                 ${act.title}
                               </div>
@@ -217,11 +217,17 @@ class DashboardView {
                             </div>
                           </div>
 
-                          <button class="btn btn-sm ${act.isCompleted ? 'btn-secondary' : 'btn-primary'}"
-                                  style="font-size: 11px; padding: 6px 12px; white-space: nowrap;"
-                                  onclick="window.DashboardView.handleActivityClick('${act.id}', '${act.type}', '${act.title.replace(/'/g, "\\'")}', '${act.animType}')">
-                            ${act.isCompleted ? '✓ Done' : '▶ Animate'}
-                          </button>
+                          <div style="display: flex; align-items: center; gap: 6px;">
+                            <button class="btn btn-sm ${act.isCompleted ? 'btn-secondary' : 'btn-primary'}"
+                                    style="font-size: 11px; padding: 6px 10px; white-space: nowrap;"
+                                    onclick="window.DashboardView.handleActivityClick('${act.id}', '${act.type}', '${act.title.replace(/'/g, "\\'")}', '${act.animType}')">
+                              ${act.isCompleted ? '✓ Done' : '▶ Animate'}
+                            </button>
+                            <button class="btn-icon" title="Delete Activity" style="font-size: 13px; opacity: 0.7; padding: 4px;"
+                                    onclick="window.DashboardView.deleteActivity('${act.id}', '${act.type}', event)">
+                              🗑️
+                            </button>
+                          </div>
                         </div>
                       `;
                     }).join('')
@@ -294,6 +300,10 @@ class DashboardView {
                       <div style="display: flex; align-items: center; gap: 8px;">
                         <span class="badge badge-${task.priority || 'medium'}">${task.priority || 'medium'}</span>
                         ${task.due_time ? `<span style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">${task.due_time}</span>` : ''}
+                        <button class="btn-icon" title="Delete Task" style="font-size: 13px; opacity: 0.7; padding: 2px 4px;"
+                                onclick="window.DashboardView.deleteTask('${task.id}', event)">
+                          🗑️
+                        </button>
                       </div>
                     </div>
                   `).join('')
@@ -316,21 +326,27 @@ class DashboardView {
               ${
                 habits.length === 0
                   ? `<div style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No habits created yet.</div>`
-                  : habits.slice(0, 4).map((habit) => {
+                  : habits.slice(0, 6).map((habit) => {
                       const log = habitLogs.find((l) => l.habit_id === habit.id && l.date === todayStr);
                       const isDone = log ? log.completed : false;
                       return `
-                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: var(--bg-primary); border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
-                          <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: var(--bg-primary); border-radius: var(--radius-md); border: 1px solid var(--border-subtle); gap: 6px;">
+                          <div style="display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1;">
                             <span style="font-size: 20px;">${habit.emoji || '✨'}</span>
-                            <div>
-                              <div style="font-size: 13px; font-weight: 600; color: var(--text-primary);">${habit.title}</div>
+                            <div style="min-width: 0; flex: 1;">
+                              <div style="font-size: 13px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${habit.title}</div>
                               <div style="font-size: 11px; color: #ff8c00;">🔥 ${habit.current_streak || 0} days</div>
                             </div>
                           </div>
-                          <button class="habit-check-circle ${isDone ? 'completed' : ''}" onclick="window.DashboardView.handleHabitCheck('${habit.id}', '${habit.title.replace(/'/g, "\\'")}', '${todayStr}')">
-                            ${isDone ? '✓' : ''}
-                          </button>
+                          <div style="display: flex; align-items: center; gap: 4px;">
+                            <button class="habit-check-circle ${isDone ? 'completed' : ''}" onclick="window.DashboardView.handleHabitCheck('${habit.id}', '${habit.title.replace(/'/g, "\\'")}', '${todayStr}')">
+                              ${isDone ? '✓' : ''}
+                            </button>
+                            <button class="btn-icon" title="Delete Habit" style="font-size: 13px; opacity: 0.7; padding: 2px 4px;"
+                                    onclick="window.DashboardView.deleteHabit('${habit.id}', event)">
+                              🗑️
+                            </button>
+                          </div>
                         </div>
                       `;
                     }).join('')
@@ -397,6 +413,34 @@ class DashboardView {
       window.avatarSim.triggerActivity(title);
     }
     await window.state.toggleHabitDate(habitId, dateStr);
+  }
+
+  // Direct Delete Task Action
+  static async deleteTask(taskId, event) {
+    if (event) event.stopPropagation();
+    if (confirm('Are you sure you want to delete this task?')) {
+      await window.state.deleteTask(taskId);
+      if (window.notifications) window.notifications.showToast('Task deleted successfully! 🗑️');
+    }
+  }
+
+  // Direct Delete Habit Action
+  static async deleteHabit(habitId, event) {
+    if (event) event.stopPropagation();
+    if (confirm('Are you sure you want to delete this habit?')) {
+      await window.state.deleteHabit(habitId);
+      if (window.notifications) window.notifications.showToast('Habit deleted successfully! 🗑️');
+    }
+  }
+
+  // Direct Delete Activity from Avatar Pad
+  static async deleteActivity(id, type, event) {
+    if (event) event.stopPropagation();
+    if (type === 'habit') {
+      await this.deleteHabit(id, event);
+    } else {
+      await this.deleteTask(id, event);
+    }
   }
 }
 

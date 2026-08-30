@@ -76,8 +76,10 @@ class TrackMateState {
     // Load all entities from IndexedDB
     await this.refreshAllData();
 
-    // If first launch (zero trackers), load rich demo data
-    if (this.trackers.length === 0) {
+    // If first launch ever (and not previously seeded/cleared), seed demo data once
+    const hasSeeded = localStorage.getItem('tm_demo_seeded');
+    if (!hasSeeded && this.trackers.length === 0) {
+      localStorage.setItem('tm_demo_seeded', 'true');
       await this.seedDemoData();
       await this.refreshAllData();
     }
