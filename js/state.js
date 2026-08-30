@@ -114,12 +114,16 @@ class TrackMateState {
 
   // --- CRUD Actions ---
 
+  getEffectiveUserId() {
+    return this.userProfile?.id || localStorage.getItem(CONFIG.STORAGE_KEYS.GUEST_USER_ID) || 'guest_user';
+  }
+
   async saveTracker(trackerData) {
     const isNew = !trackerData.id;
     const tracker = {
       ...trackerData,
       id: trackerData.id || window.db.generateUUID(),
-      user_id: this.userProfile.id,
+      user_id: this.getEffectiveUserId(),
       updated_at: new Date().toISOString(),
       created_at: trackerData.created_at || new Date().toISOString()
     };
@@ -143,7 +147,7 @@ class TrackMateState {
     const task = {
       ...taskData,
       id: taskData.id || window.db.generateUUID(),
-      user_id: this.userProfile.id,
+      user_id: this.getEffectiveUserId(),
       updated_at: new Date().toISOString(),
       created_at: taskData.created_at || new Date().toISOString()
     };
@@ -201,7 +205,7 @@ class TrackMateState {
     const habit = {
       ...habitData,
       id: habitData.id || window.db.generateUUID(),
-      user_id: this.userProfile.id,
+      user_id: this.getEffectiveUserId(),
       updated_at: new Date().toISOString(),
       created_at: habitData.created_at || new Date().toISOString(),
       current_streak: habitData.current_streak || 0,

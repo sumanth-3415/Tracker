@@ -255,37 +255,49 @@ class TrackersView {
 
   static async handleTrackerSubmit(event) {
     event.preventDefault();
-    const id = document.getElementById('tracker-id').value;
-    const name = document.getElementById('tracker-name').value;
-    const emoji = document.getElementById('tracker-emoji').value;
-    const description = document.getElementById('tracker-description').value;
-    const color = document.getElementById('tracker-color').value;
-    const type = document.getElementById('tracker-type-select').value;
+    try {
+      const id = document.getElementById('tracker-id')?.value;
+      const name = document.getElementById('tracker-name')?.value?.trim();
+      const emoji = document.getElementById('tracker-emoji')?.value?.trim() || '📝';
+      const description = document.getElementById('tracker-description')?.value?.trim() || '';
+      const color = document.getElementById('tracker-color')?.value || '#6366f1';
+      const type = document.getElementById('tracker-type-select')?.value || 'custom';
 
-    const customFields = [];
-    document.querySelectorAll('.custom-field-row').forEach((row) => {
-      const fieldName = row.querySelector('.field-name-input').value.trim();
-      const fieldType = row.querySelector('.field-type-select').value;
-      if (fieldName) {
-        customFields.push({ name: fieldName, type: fieldType });
+      if (!name) {
+        if (window.notifications) window.notifications.showToast('Please enter a tracker name');
+        return;
       }
-    });
 
-    const trackerData = {
-      id: id || undefined,
-      name,
-      emoji,
-      description,
-      color,
-      type,
-      custom_fields: customFields,
-      is_private: true
-    };
+      const customFields = [];
+      document.querySelectorAll('.custom-field-row').forEach((row) => {
+        const fieldName = row.querySelector('.field-name-input')?.value?.trim();
+        const fieldType = row.querySelector('.field-type-select')?.value || 'text';
+        if (fieldName) {
+          customFields.push({ name: fieldName, type: fieldType });
+        }
+      });
 
-    await window.state.saveTracker(trackerData);
-    this.closeTrackerModal();
-    if (window.notifications) {
-      window.notifications.showToast(`Tracker "${name}" saved! 🎯`);
+      const trackerData = {
+        id: id || undefined,
+        name,
+        emoji,
+        description,
+        color,
+        type,
+        custom_fields: customFields,
+        is_private: true
+      };
+
+      await window.state.saveTracker(trackerData);
+      this.closeTrackerModal();
+      if (window.notifications) {
+        window.notifications.showToast(`Tracker "${name}" saved! 🎯`);
+      }
+    } catch (err) {
+      console.error('[TrackersView] Error saving tracker:', err);
+      if (window.notifications) {
+        window.notifications.showToast('Could not save tracker. Check console.');
+      }
     }
   }
 
