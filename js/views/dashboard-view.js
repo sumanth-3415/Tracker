@@ -1,5 +1,5 @@
 /**
- * TrackMate - Dashboard View Renderer (With RPG Gamification, Focus Room & Avatar Simulator)
+ * TrackMate - Dashboard View Renderer (With Dynamic User Activity Driven Avatar)
  */
 
 class DashboardView {
@@ -17,7 +17,7 @@ class DashboardView {
     const formattedDate = now.toLocaleDateString('en-US', dateOptions);
 
     // Compute Today's Tasks
-    const allTasks = window.state.tasks;
+    const allTasks = window.state.tasks || [];
     const todayTasks = window.RecurringEngine
       ? window.RecurringEngine.getTasksForDate(allTasks, todayStr)
       : allTasks.filter((t) => t.due_date === todayStr);
@@ -42,6 +42,41 @@ class DashboardView {
     const radius = 38;
     const circumference = 2 * Math.PI * radius;
     const strokeDashoffset = circumference - (completionPct / 100) * circumference;
+
+    // Active User Activities for Avatar Simulator
+    const habits = window.state.habits || [];
+    const habitLogs = window.state.habitLogs || [];
+
+    // Combine user's habits and today's tasks into actionable items
+    const userActivities = [];
+
+    habits.forEach((h) => {
+      const log = habitLogs.find((l) => l.habit_id === h.id && l.date === todayStr);
+      const isDone = log ? log.completed : false;
+      const animType = window.avatarSim ? window.avatarSim.detectActivityType(h.title) : 'general';
+      userActivities.push({
+        id: h.id,
+        type: 'habit',
+        title: h.title,
+        emoji: h.emoji || '✨',
+        animType,
+        isCompleted: isDone,
+        streak: h.current_streak || 0
+      });
+    });
+
+    todayTasks.forEach((t) => {
+      const animType = window.avatarSim ? window.avatarSim.detectActivityType(t.title, '', t.category, t.tags) : 'general';
+      userActivities.push({
+        id: t.id,
+        type: 'task',
+        title: t.title,
+        emoji: '📝',
+        animType,
+        isCompleted: t.status === 'completed',
+        priority: t.priority || 'medium'
+      });
+    });
 
     container.innerHTML = `
       <!-- Daily Motivational Quote Banner -->
@@ -117,87 +152,80 @@ class DashboardView {
       </div>
 
       <!-- ========================================================================= -->
-      <!-- INTERACTIVE LIVING AVATAR & REAL-WORLD ACTION SIMULATOR                   -->
+      <!-- DYNAMIC LIVING AVATAR & REAL-WORLD ACTIVITY SIMULATOR                     -->
       <!-- ========================================================================= -->
       <div class="avatar-simulator-card">
         <div class="avatar-sim-header">
           <div class="avatar-sim-title">
-            <span>✨</span> Interactive Life Avatar & Action Simulator
+            <span>✨</span> Interactive Living Avatar
           </div>
           <div style="font-size: 11px; color: var(--text-muted);">
-            Log real physical actions below to see live physical animations!
+            Completing any activity below automatically triggers its physical animation!
           </div>
         </div>
 
         <div class="avatar-sim-grid">
           <!-- Left: Canvas Simulation Arena -->
           <div class="avatar-stage-box">
-            <div class="sim-active-badge">
+            <div id="avatar-active-action-badge" class="sim-active-badge">
               <span style="color: var(--accent-emerald);">●</span> Live Physiological Avatar
             </div>
             <canvas id="avatar-canvas" class="avatar-canvas"></canvas>
           </div>
 
-          <!-- Right: Real-World Action Loggers & Live Meters -->
+          <!-- Right: Dynamic User Activities List -->
           <div class="action-loggers-pad">
-            <!-- Hydration Metric -->
-            <div class="sim-metric-group">
-              <div class="sim-metric-top">
-                <span style="color: #06b6d4;">💧 Hydration Level</span>
-                <span id="sim-water-txt" style="font-family: var(--font-mono); color: #06b6d4;">1250 / 2500 ml (50%)</span>
-              </div>
-              <div class="sim-progress-track">
-                <div id="sim-water-fill" class="sim-progress-fill fill-water" style="width: 50%;"></div>
-              </div>
-              <div class="action-buttons-row">
-                <button class="btn-sim-action btn-sim-water" onclick="window.avatarSim.triggerDrink(250)">+250ml Glass 💧</button>
-                <button class="btn-sim-action btn-sim-water" onclick="window.avatarSim.triggerDrink(500)">+500ml Bottle 🌊</button>
-              </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px;">
+              <span style="font-size: var(--text-xs); font-weight: 700; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.05em;">
+                ⚡ Your Active Activities & Routines
+              </span>
+              <button class="btn btn-sm btn-ghost" onclick="window.app.openQuickAddModal()" style="font-size: 11px; padding: 2px 6px;">
+                + Add New
+              </button>
             </div>
 
-            <!-- Steps / Walking Metric -->
-            <div class="sim-metric-group">
-              <div class="sim-metric-top">
-                <span style="color: #10b981;">🚶 Steps & Movement</span>
-                <span id="sim-walk-txt" style="font-family: var(--font-mono); color: #10b981;">4500 / 10000 steps (45%)</span>
-              </div>
-              <div class="sim-progress-track">
-                <div id="sim-walk-fill" class="sim-progress-fill fill-walk" style="width: 45%;"></div>
-              </div>
-              <div class="action-buttons-row">
-                <button class="btn-sim-action btn-sim-walk" onclick="window.avatarSim.triggerWalk(1000)">+1,000 Steps 👟</button>
-                <button class="btn-sim-action btn-sim-walk" onclick="window.avatarSim.triggerWalk(2500)">+2,500 Walk 🏃</button>
-              </div>
-            </div>
+            <div style="display: flex; flex-direction: column; gap: var(--space-2); max-height: 240px; overflow-y: auto;">
+              ${
+                userActivities.length === 0
+                  ? `
+                    <div style="text-align: center; padding: 2rem; background: var(--bg-primary); border-radius: var(--radius-lg); border: 1px dashed var(--border-subtle);">
+                      <div style="font-size: 24px; margin-bottom: 6px;">🎯</div>
+                      <div style="font-size: 13px; font-weight: 600; color: var(--text-primary);">No activities added yet</div>
+                      <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px; margin-bottom: 12px;">Add any task or habit (e.g. "Drink Water", "Morning Walk", "Study Java") to see your avatar perform it!</div>
+                      <button class="btn btn-sm btn-primary" onclick="window.app.openQuickAddModal()">+ Add Your First Activity</button>
+                    </div>
+                  `
+                  : userActivities.map((act) => {
+                      const badgeIcon = act.animType === 'drinking' ? '💧 Water'
+                        : (act.animType === 'walking' ? '🚶 Walk'
+                        : (act.animType === 'workout' ? '🏋️ Workout'
+                        : (act.animType === 'studying' ? '🧠 Study'
+                        : (act.animType === 'recharge' ? '🌙 Rest' : '✨ Activity'))));
 
-            <!-- Workout Reps Metric -->
-            <div class="sim-metric-group">
-              <div class="sim-metric-top">
-                <span style="color: #f97316;">🏋️ Strength & Workout</span>
-                <span id="sim-workout-txt" style="font-family: var(--font-mono); color: #f97316;">25 / 50 reps (50%)</span>
-              </div>
-              <div class="sim-progress-track">
-                <div id="sim-workout-fill" class="sim-progress-fill fill-workout" style="width: 50%;"></div>
-              </div>
-              <div class="action-buttons-row">
-                <button class="btn-sim-action btn-sim-workout" onclick="window.avatarSim.triggerWorkout(10)">+10 Reps 💪</button>
-                <button class="btn-sim-action btn-sim-workout" onclick="window.avatarSim.triggerWorkout(25)">+25 Pushups / Dumbbell 🔥</button>
-              </div>
-            </div>
+                      return `
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--bg-primary); border-radius: var(--radius-md); border: 1px solid var(--border-subtle); gap: 10px;">
+                          <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+                            <span style="font-size: 18px;">${act.emoji}</span>
+                            <div style="min-width: 0;">
+                              <div style="font-size: 13px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                ${act.title}
+                              </div>
+                              <div style="display: flex; align-items: center; gap: 6px; margin-top: 2px;">
+                                <span class="badge" style="font-size: 10px; padding: 1px 6px; background: rgba(99, 102, 241, 0.15); color: #818cf8;">${badgeIcon}</span>
+                                ${act.streak ? `<span style="font-size: 10px; color: #f59e0b;">🔥 ${act.streak}d</span>` : ''}
+                              </div>
+                            </div>
+                          </div>
 
-            <!-- Study Focus Metric -->
-            <div class="sim-metric-group">
-              <div class="sim-metric-top">
-                <span style="color: #8b5cf6;">🧠 Study & Brain Focus</span>
-                <span id="sim-study-txt" style="font-family: var(--font-mono); color: #8b5cf6;">45 / 90 mins (50%)</span>
-              </div>
-              <div class="sim-progress-track">
-                <div id="sim-study-fill" class="sim-progress-fill fill-brain" style="width: 50%;"></div>
-              </div>
-              <div class="action-buttons-row">
-                <button class="btn-sim-action btn-sim-brain" onclick="window.avatarSim.triggerStudy(30)">+30m Study 📚</button>
-                <button class="btn-sim-action btn-sim-brain" onclick="window.avatarSim.triggerStudy(60)">+60m Deep Focus 💻</button>
-              </div>
+                          <button class="btn btn-sm ${act.isCompleted ? 'btn-secondary' : 'btn-primary'}"
+                                  style="font-size: 11px; padding: 6px 12px; white-space: nowrap;"
+                                  onclick="window.DashboardView.handleActivityClick('${act.id}', '${act.type}', '${act.title.replace(/'/g, "\\'")}', '${act.animType}')">
+                            ${act.isCompleted ? '✓ Done' : '▶ Animate'}
+                          </button>
+                        </div>
+                      `;
+                    }).join('')
+              }
             </div>
           </div>
         </div>
@@ -258,7 +286,7 @@ class DashboardView {
                   : todayTasks.map((task) => `
                     <div class="dash-task-item ${task.status === 'completed' ? 'completed' : ''}" data-task-id="${task.id}">
                       <div class="dash-task-left">
-                        <div class="dash-checkbox ${task.status === 'completed' ? 'checked' : ''}" onclick="window.state.toggleTaskCompletion('${task.id}', ${task.status !== 'completed'})">
+                        <div class="dash-checkbox ${task.status === 'completed' ? 'checked' : ''}" onclick="window.DashboardView.handleTaskCheck('${task.id}', '${task.title.replace(/'/g, "\\'")}', ${task.status !== 'completed'})">
                           ${task.status === 'completed' ? '✓' : ''}
                         </div>
                         <div class="dash-task-title">${task.title}</div>
@@ -279,17 +307,17 @@ class DashboardView {
           <div class="card">
             <div class="card-header">
               <h2 class="card-title">
-                <span>🔥</span> Daily Habits (${window.state.habits.length})
+                <span>🔥</span> Daily Habits (${habits.length})
               </h2>
               <a href="#habits" class="btn btn-sm btn-ghost">View All →</a>
             </div>
 
             <div class="habits-container">
               ${
-                window.state.habits.length === 0
+                habits.length === 0
                   ? `<div style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No habits created yet.</div>`
-                  : window.state.habits.slice(0, 4).map((habit) => {
-                      const log = window.state.habitLogs.find((l) => l.habit_id === habit.id && l.date === todayStr);
+                  : habits.slice(0, 4).map((habit) => {
+                      const log = habitLogs.find((l) => l.habit_id === habit.id && l.date === todayStr);
                       const isDone = log ? log.completed : false;
                       return `
                         <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: var(--bg-primary); border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
@@ -300,7 +328,7 @@ class DashboardView {
                               <div style="font-size: 11px; color: #ff8c00;">🔥 ${habit.current_streak || 0} days</div>
                             </div>
                           </div>
-                          <button class="habit-check-circle ${isDone ? 'completed' : ''}" onclick="window.state.toggleHabitDate('${habit.id}', '${todayStr}')">
+                          <button class="habit-check-circle ${isDone ? 'completed' : ''}" onclick="window.DashboardView.handleHabitCheck('${habit.id}', '${habit.title.replace(/'/g, "\\'")}', '${todayStr}')">
                             ${isDone ? '✓' : ''}
                           </button>
                         </div>
@@ -328,11 +356,10 @@ class DashboardView {
       </div>
     `;
 
-    // Initialize Avatar Simulator Canvas & Metrics
+    // Initialize Avatar Simulator Canvas
     setTimeout(() => {
       if (window.avatarSim) {
         window.avatarSim.initCanvas('avatar-canvas');
-        window.avatarSim.updateUIMetrics();
       }
 
       // Render Weekly Chart
@@ -340,6 +367,36 @@ class DashboardView {
       const values = [5, 8, 6, 9, 7, 4, completedTasks.length || 6];
       window.Charts.renderBarChart('dash-weekly-chart', { labels: days, values });
     }, 50);
+  }
+
+  // Handle activity click directly from Avatar Pad
+  static async handleActivityClick(id, type, title, animType) {
+    if (window.avatarSim) {
+      window.avatarSim.triggerActivity(title, animType);
+    }
+
+    const todayStr = new Date().toISOString().split('T')[0];
+    if (type === 'habit') {
+      await window.state.toggleHabitDate(id, todayStr);
+    } else {
+      await window.state.toggleTaskCompletion(id, true);
+    }
+  }
+
+  // Handle task checkbox with automatic avatar animation trigger
+  static async handleTaskCheck(taskId, title, isCompleted) {
+    if (isCompleted && window.avatarSim) {
+      window.avatarSim.triggerActivity(title);
+    }
+    await window.state.toggleTaskCompletion(taskId, isCompleted);
+  }
+
+  // Handle habit check with automatic avatar animation trigger
+  static async handleHabitCheck(habitId, title, dateStr) {
+    if (window.avatarSim) {
+      window.avatarSim.triggerActivity(title);
+    }
+    await window.state.toggleHabitDate(habitId, dateStr);
   }
 }
 
